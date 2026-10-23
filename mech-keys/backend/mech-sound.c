@@ -1,9 +1,11 @@
+#define _GNU_SOURCE
 #define MINIAUDIO_IMPLEMENTATION
 #include "miniaudio.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <dirent.h>
@@ -34,6 +36,10 @@ static int g_engine_inited = 0;
 static KeySound g_sounds[MAX_SOUNDS];
 static int g_sound_count = 0;
 static char g_default_wav[MAX_PATH_LEN] = "";
+static char g_space_wav[MAX_PATH_LEN] = "";
+static char g_enter_wav[MAX_PATH_LEN] = "";
+static char g_backspace_wav[MAX_PATH_LEN] = "";
+
 static float g_volume = 1.0f;
 static int g_muted = 0;
 static char g_pack_dir[MAX_PATH_LEN] = "";
@@ -56,9 +62,40 @@ void log_msg(const char *fmt, ...) {
     fflush(g_log);
 }
 
+static int parse_name_to_evdev(const char *name) {
+    if (strcasestr(name, "space")) return 57;
+    if (strcasestr(name, "enter") || strstr(name, "ent.")) return 28;
+    if (strcasestr(name, "back")) return 14;
+    if (strcasestr(name, "tab")) return 15;
+    if (strcasestr(name, "shift")) return 42;
+    if (strcasestr(name, "ctrl")) return 29;
+    if (strcasestr(name, "alt")) return 56;
+    if (strcasestr(name, "caps")) return 58;
+
+    char c = 0;
+    if (strncmp(name, "Key", 3) == 0 && strlen(name) >= 4) {
+        c = name[3];
+    } else if (strlen(name) >= 2 && name[1] == '.') {
+        c = name[0];
+    }
+    if (c >= 'A' && c <= 'Z') c = c + ('a' - 'A');
+    switch (c) {
+        case 'q': return 16; case 'w': return 17; case 'e': return 18; case 'r': return 19; case 't': return 20;
+        case 'y': return 21; case 'u': return 22; case 'i': return 23; case 'o': return 24; case 'p': return 25;
+        case 'a': return 30; case 's': return 31; case 'd': return 32; case 'f': return 33; case 'g': return 34;
+        case 'h': return 35; case 'j': return 36; case 'k': return 37; case 'l': return 38;
+        case 'z': return 44; case 'x': return 45; case 'c': return 46; case 'v': return 47; case 'b': return 48;
+        case 'n': return 49; case 'm': return 50;
+    }
+    return atoi(name);
+}
+
 void unload_soundpack() {
     g_sound_count = 0;
     g_default_wav[0] = '\0';
+    g_space_wav[0] = '\0';
+    g_enter_wav[0] = '\0';
+    g_backspace_wav[0] = '\0';
 }
 
 int load_soundpack(const char *dir_path) {
@@ -68,7 +105,6 @@ int load_soundpack(const char *dir_path) {
     strncpy(g_pack_dir, dir_path, sizeof(g_pack_dir) - 1);
     log_msg("Loading sound pack from %s\n", dir_path);
 
-    // Read all .wav files in directory
     DIR *d = opendir(dir_path);
     if (d) {
         struct dirent *ent;
@@ -76,13 +112,20 @@ int load_soundpack(const char *dir_path) {
             if (strstr(ent->d_name, ".wav")) {
                 char wav_full[MAX_PATH_LEN];
                 snprintf(wav_full, sizeof(wav_full), "%s/%s", dir_path, ent->d_name);
-                int keycode = atoi(ent->d_name);
+                int keycode = parse_name_to_evdev(ent->d_name);
 
                 g_sounds[g_sound_count].keycode = keycode;
                 strncpy(g_sounds[g_sound_count].path, wav_full, MAX_PATH_LEN - 1);
 
-                // Pick representative fallback sound (e.g. keycode 57 for spacebar or 30 for 'a')
-                if (keycode == 57 || keycode == 30 || g_sound_count == 0) {
+                if (keycode == 57 || strcasestr(ent->d_name, "space")) {
+                    strncpy(g_space_wav, wav_full, MAX_PATH_LEN - 1);
+                } else if (keycode == 28 || strcasestr(ent->d_name, "enter") || strstr(ent->d_name, "ent.")) {
+                    strncpy(g_enter_wav, wav_full, MAX_PATH_LEN - 1);
+                } else if (keycode == 14 || strcasestr(ent->d_name, "back")) {
+                    strncpy(g_backspace_wav, wav_full, MAX_PATH_LEN - 1);
+                }
+
+                if (keycode == 30 || g_default_wav[0] == '\0') {
                     strncpy(g_default_wav, wav_full, MAX_PATH_LEN - 1);
                 }
 
@@ -99,15 +142,25 @@ int load_soundpack(const char *dir_path) {
 
 void play_key(int keycode, int is_press) {
     if (g_muted || !is_press || g_sound_count == 0) {
-        log_msg("Skip play: muted=%d, is_press=%d, sounds=%d\n", g_muted, is_press, g_sound_count);
         return;
     }
 
     const char *wav = NULL;
-    for (int i = 0; i < g_sound_count; i++) {
-        if (g_sounds[i].keycode == keycode) {
-            wav = g_sounds[i].path;
-            break;
+
+    if (keycode == 57 && g_space_wav[0] != '\0') {
+        wav = g_space_wav;
+    } else if (keycode == 28 && g_enter_wav[0] != '\0') {
+        wav = g_enter_wav;
+    } else if (keycode == 14 && g_backspace_wav[0] != '\0') {
+        wav = g_backspace_wav;
+    }
+
+    if (!wav) {
+        for (int i = 0; i < g_sound_count; i++) {
+            if (g_sounds[i].keycode == keycode) {
+                wav = g_sounds[i].path;
+                break;
+            }
         }
     }
 

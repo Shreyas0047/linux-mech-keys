@@ -14,9 +14,16 @@ Missing the satisfying tactile sound of your mechanical keyboard when working on
 
 | Profile | Switch Type | Sound Characteristic |
 | :--- | :--- | :--- |
-| **Kailh Box Jade** | Clickbar Clicky | Crisp, tactile, loud snap |
-| **NovelKeys Creams** | POM Linear | Deep, buttery, smooth "thock" |
-| **Cherry MX Red** | Linear | Classic soft mechanical clack |
+| 🟢 **Kailh Box Jade** | Clickbar Clicky | Ultra-crisp, sharp, loud snap with thick clickbar |
+| 🟡 **NovelKeys Creams** | Full-POM Linear | Deep, buttery, smooth "thock" |
+| 🍌 **Banana Split (Lubed)** | Custom Lubed Linear | Creamy, velvety enthusiast custom keyboard clack |
+| 🔵 **Cherry MX Blue** | Classic Clicky | Iconic crunchy mechanical typewriter click |
+| 💜 **Akko Lavender Purple** | Enthusiast Tactile | Snappy tactile bump with clean bottom-out clack |
+| 🟤 **Cherry MX Brown** | Classic Tactile | Subtle tactile bump, gentle woody clack |
+| 👑 **Topre Purple Hybrid** | Electro-Capacitive | The holy grail deep dome "thock-pop" sound |
+| ⚡ **Cherry MX Speed Silver** | Rapid Linear | Fast, responsive short-actuation gaming linear |
+| 🔴 **Cherry MX Red** | Smooth Linear | Lightweight, classic soft mechanical clack |
+| 🐍 **Razer Green (BlackWidow)** | Loud Clicky | Crisp, bright, reverberant gaming mechanical click |
 
 ---
 

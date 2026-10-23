@@ -5,3 +5,5 @@
 .DS_Store
 *.swp
 *~
+# User runtime settings
+mech-keys/settings.json

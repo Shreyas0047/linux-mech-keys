@@ -39,7 +39,7 @@ Designed specifically for **Noctalia Shell** (and Wayland environments like Niri
 
 ## 🔒 Requirements
 
-* **Noctalia Desktop Shell** (v3.6.0+)
+* **Noctalia Desktop Shell** (v3.6.0+) — *Optional: The core sound engine `bin/mech-sound` also runs standalone on any Linux desktop environment (Hyprland, Sway, i3, GNOME, KDE) without Noctalia.*
 * User in the `input` group:
   ```bash
   sudo usermod -aG input $USER

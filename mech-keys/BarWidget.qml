@@ -42,7 +42,7 @@ Item {
     width: root.contentWidth
     height: root.contentHeight
     radius: Style.radiusM
-    color: mouseArea.containsMouse ? Style.capsuleHoverColor : Style.capsuleColor
+    color: mouseArea.containsMouse ? Color.mHover : Style.capsuleColor
     border.color: root.enabledSound ? Color.mPrimary : Style.capsuleBorderColor
     border.width: root.enabledSound ? 1.5 : Style.capsuleBorderWidth
 

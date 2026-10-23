@@ -20,6 +20,19 @@ Item {
   property bool showBarIcon: cfg.showBarIcon ?? defaults.showBarIcon ?? true
   property bool enableToasts: cfg.enableToasts ?? defaults.enableToasts ?? true
 
+  IpcHandler {
+    target: "plugin:mech-keys"
+    function test() {
+      root.testSound();
+    }
+    function toggle() {
+      root.toggleSound();
+    }
+    function cycle() {
+      root.cycleSoundPack();
+    }
+  }
+
   // Device list fetched from engine
   property var availableDevices: [
     { key: "", name: "Auto-detect all keyboards (Recommended)" }
@@ -246,7 +259,7 @@ Item {
     sendCommand("PACK " + getPackDirectory(soundPack));
     sendCommand("VOLUME " + volume);
     sendCommand("MUTE 0");
-    // Send a test spacebar event trigger or reload confirmation
+    sendCommand("TEST");
     const title = pluginApi?.tr("plugin.name") || "Mechanical Keyboard";
     ToastService.showNotice(title, "Profile active: " + getSoundPackName(soundPack), "keyboard");
   }

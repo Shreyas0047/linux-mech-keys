@@ -359,7 +359,9 @@ int main(int argc, char **argv) {
                     for (int k = 0; k < count; k++) {
                         if (ev[k].type == EV_KEY) {
                             log_msg("KEY EVENT: fd=%d, code=%d, val=%d\n", fd, ev[k].code, ev[k].value);
-                            if (ev[k].value == 1 || ev[k].value == 2) {
+                            // Only play sound on initial key press (value == 1).
+                            // Ignore repeat events (value == 2) so holding a key doesn't trigger continuous sounds.
+                            if (ev[k].value == 1) {
                                 play_key(ev[k].code, 1);
                             }
                         }

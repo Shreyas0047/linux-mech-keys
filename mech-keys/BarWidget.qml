@@ -1,8 +1,7 @@
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Services.UI
 import qs.Widgets
 
@@ -17,66 +16,41 @@ Item {
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
-  readonly property string screenName: screen ? screen.name : ""
-  readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
-  readonly property bool isVertical: barPosition === "left" || barPosition === "right"
-  readonly property real barHeight: Style.getBarHeightForScreen(screenName)
-  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screenName)
-  readonly property real barFontSize: Style.getBarFontSizeForScreen(screenName)
-
   readonly property var mainInstance: pluginApi?.mainInstance
   readonly property bool enabledSound: mainInstance ? mainInstance.enabledSound : false
-  readonly property string currentPack: mainInstance ? mainInstance.soundPack : "boxjade"
+  readonly property string currentPack: mainInstance ? mainInstance.soundPack : "creams"
+  readonly property string packName: mainInstance ? mainInstance.getSoundPackName(currentPack) : currentPack
 
-  readonly property real contentWidth: isVertical ? Style.capsuleHeight : Style.capsuleHeight
-  readonly property real contentHeight: Style.capsuleHeight
+  implicitWidth: pill.width
+  implicitHeight: pill.height
 
-  implicitWidth: contentWidth
-  implicitHeight: contentHeight
+  BarPill {
+    id: pill
 
-  Layout.alignment: Qt.AlignVCenter
+    screen: root.screen
+    oppositeDirection: BarService.getPillDirection(root)
 
-  Rectangle {
-    id: visualCapsule
-    anchors.centerIn: parent
-    width: root.contentWidth
-    height: root.contentHeight
-    radius: Style.radiusM
-    color: mouseArea.containsMouse ? Color.mHover : Style.capsuleColor
-    border.color: root.enabledSound ? Color.mPrimary : Style.capsuleBorderColor
-    border.width: root.enabledSound ? 1.5 : Style.capsuleBorderWidth
+    icon: root.enabledSound ? "keyboard" : "keyboard-off"
+    customIconColor: root.enabledSound ? Color.mPrimary : Qt.alpha(Color.mOnSurfaceVariant, 0.4)
+    customTextColor: Color.mPrimary
 
-    NIcon {
-      anchors.centerIn: parent
-      icon: root.enabledSound ? "keyboard" : "keyboard-off"
-      color: root.enabledSound ? Color.mPrimary : Qt.alpha(Color.mOnSurfaceVariant, 0.4)
+    text: ""
+
+    tooltipText: {
+      if (root.enabledSound) {
+        return "Mechanical Keyboard: Active (" + root.packName + ")\n• Left-click: Mute\n• Right-click: Switch Switch\n• Scroll wheel: Adjust Volume";
+      } else {
+        return "Mechanical Keyboard: Muted\n• Left-click: Unmute";
+      }
     }
 
-    MouseArea {
-      id: mouseArea
-      anchors.fill: parent
-      hoverEnabled: true
-      acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-      ToolTip.visible: containsMouse
-      ToolTip.delay: 400
-      ToolTip.text: {
-        const packName = mainInstance ? mainInstance.getSoundPackName(root.currentPack) : root.currentPack;
-        if (root.enabledSound) {
-          const tpl = pluginApi?.tr("bar.tooltip-on") || "Mechanical Keyboard: Active ({pack})\nLeft-click: Toggle Mute | Right-click: Switch Profile";
-          return tpl.replace("{pack}", packName);
-        } else {
-          return pluginApi?.tr("bar.tooltip-off") || "Mechanical Keyboard: Muted\nLeft-click: Enable Sound";
-        }
-      }
-
-      onClicked: mouse => {
-        if (mouse.button === Qt.LeftButton) {
-          mainInstance?.toggleSound();
-        } else if (mouse.button === Qt.RightButton) {
-          mainInstance?.cycleSoundPack();
-        }
-      }
+    onClicked: mainInstance?.toggleSound()
+    onRightClicked: mainInstance?.cycleSoundPack()
+    onWheel: function(delta) {
+      if (!mainInstance) return;
+      var step = (delta > 0 ? 0.05 : -0.05);
+      var newVol = Math.max(0.0, Math.min(1.0, mainInstance.volume + step));
+      mainInstance.setVolume(newVol);
     }
   }
 }

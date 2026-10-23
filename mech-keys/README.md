@@ -16,16 +16,16 @@ Designed specifically for **Noctalia Shell** (and Wayland environments like Niri
   - **Right-Click:** Instantly toggles sound ON / OFF (Mute / Unmute).
   - **Scroll Wheel:** Smoothly increases or decreases playback volume on the fly.
 - **🔊 10 Curated & Normalized Switch Profiles:**
-  - 🟢 **Kailh Box Jade** — Sharp, crisp clickbar tactility
-  - 🟡 **NovelKeys Creams** — Smooth, deep, POM linear "thock"
-  - 🍌 **Banana Split Lubed** — Buttery-smooth enthusiast linear pop
-  - 🔵 **Cherry MX Blue** — Iconic, classic mechanical click
-  - 💜 **Akko Lavender Purple** — Snappy early tactile bump
-  - 🟤 **Cherry MX Brown** — Subtle, quiet tactile feel
-  - 👑 **Topre Purple Hybrid** — Deep electro-capacitive thock-pop
-  - ⚡ **Cherry MX Speed Silver** — Fast short-travel linear bottom-out
-  - 🔴 **Cherry MX Red** — Smooth, classic linear glide
-  - 🐍 **Razer Green** — Loud gaming clicky with crisp tactile report
+  - **Kailh Box Jade** — Sharp, crisp clickbar tactility
+  - **NovelKeys Creams** — Smooth, deep, POM linear "thock"
+  - **Banana Split Lubed** — Buttery-smooth enthusiast linear pop
+  - **Cherry MX Blue** — Iconic, classic mechanical click
+  - **Akko Lavender Purple** — Snappy early tactile bump
+  - **Cherry MX Brown** — Subtle, quiet tactile feel
+  - **Topre Purple Hybrid** — Deep electro-capacitive thock-pop
+  - **Cherry MX Speed Silver** — Fast short-travel linear bottom-out
+  - **Cherry MX Red** — Smooth, classic linear glide
+  - **Razer Green** — Loud gaming clicky with crisp tactile report
 - **🎛️ Settings Dialog:**
   - Switch profile picker dropdown with live test button
   - Volume slider (0% to 100%)

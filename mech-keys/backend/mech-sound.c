@@ -207,15 +207,22 @@ int is_keyboard_device(const char *dev_path, char *name_out, size_t name_max) {
 void list_devices_json() {
     printf("[\n");
     int first = 1;
-    for (int i = 0; i < 32; i++) {
-        char path[64];
-        snprintf(path, sizeof(path), "/dev/input/event%d", i);
-        char name[128];
-        if (is_keyboard_device(path, name, sizeof(name))) {
-            if (!first) printf(",\n");
-            printf("  {\"path\": \"%s\", \"name\": \"%s\"}", path, name);
-            first = 0;
+    DIR *d = opendir("/dev/input");
+    if (d) {
+        struct dirent *ent;
+        while ((ent = readdir(d)) != NULL) {
+            if (strncmp(ent->d_name, "event", 5) == 0) {
+                char path[MAX_PATH_LEN];
+                snprintf(path, sizeof(path), "/dev/input/%s", ent->d_name);
+                char name[128];
+                if (is_keyboard_device(path, name, sizeof(name))) {
+                    if (!first) printf(",\n");
+                    printf("  {\"path\": \"%s\", \"name\": \"%s\"}", path, name);
+                    first = 0;
+                }
+            }
         }
+        closedir(d);
     }
     printf("\n]\n");
 }
@@ -252,15 +259,22 @@ int add_device(int epoll_fd, const char *dev_path) {
 
 int auto_detect_devices(int epoll_fd) {
     int found = 0;
-    for (int i = 0; i < 32; i++) {
-        char path[64];
-        snprintf(path, sizeof(path), "/dev/input/event%d", i);
-        char name[128];
-        if (is_keyboard_device(path, name, sizeof(name))) {
-            if (add_device(epoll_fd, path) >= 0) {
-                found++;
+    DIR *d = opendir("/dev/input");
+    if (d) {
+        struct dirent *ent;
+        while ((ent = readdir(d)) != NULL) {
+            if (strncmp(ent->d_name, "event", 5) == 0) {
+                char path[MAX_PATH_LEN];
+                snprintf(path, sizeof(path), "/dev/input/%s", ent->d_name);
+                char name[128];
+                if (is_keyboard_device(path, name, sizeof(name))) {
+                    if (add_device(epoll_fd, path) >= 0) {
+                        found++;
+                    }
+                }
             }
         }
+        closedir(d);
     }
     return found;
 }
@@ -299,7 +313,10 @@ int main(int argc, char **argv) {
     int initial_mute = 0;
 
     for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "--list-devices") == 0 || strcmp(argv[i], "-l") == 0) {
+        if (strcmp(argv[i], "--ping") == 0) {
+            printf("PONG\n");
+            return 0;
+        } else if (strcmp(argv[i], "--list-devices") == 0 || strcmp(argv[i], "-l") == 0) {
             list_devices_json();
             return 0;
         } else if ((strcmp(argv[i], "--device") == 0 || strcmp(argv[i], "-d") == 0) && i + 1 < argc) {

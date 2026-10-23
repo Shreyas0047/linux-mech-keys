@@ -40,16 +40,16 @@ Item {
 
   // Sound pack profiles
   readonly property var soundPacks: [
-    { key: "boxjade", name: "🟢 Kailh Box Jade (Sharp Clicky)" },
-    { key: "creams", name: "🟡 NovelKeys Creams (Deep Thock)" },
-    { key: "banana-split", name: "🍌 Banana Split Lubed (Buttery Linear)" },
-    { key: "cherry-blue", name: "🔵 Cherry MX Blue (Iconic Clicky)" },
-    { key: "akko-lavender", name: "💜 Akko Lavender Purple (Tactile Bump)" },
-    { key: "cherry-brown", name: "🟤 Cherry MX Brown (Classic Tactile)" },
-    { key: "topre", name: "👑 Topre Purple Hybrid (Deep Thock-Pop)" },
-    { key: "speed-silver", name: "⚡ Cherry MX Speed Silver (Fast Linear)" },
-    { key: "cherry-red", name: "🔴 Cherry MX Red (Smooth Linear)" },
-    { key: "razer-green", name: "🐍 Razer Green (Loud Clicky)" }
+    { key: "boxjade", name: "Kailh Box Jade (Sharp Clicky)" },
+    { key: "creams", name: "NovelKeys Creams (Deep Thock)" },
+    { key: "banana-split", name: "Banana Split Lubed (Buttery Linear)" },
+    { key: "cherry-blue", name: "Cherry MX Blue (Iconic Clicky)" },
+    { key: "akko-lavender", name: "Akko Lavender Purple (Tactile Bump)" },
+    { key: "cherry-brown", name: "Cherry MX Brown (Classic Tactile)" },
+    { key: "topre", name: "Topre Purple Hybrid (Deep Thock-Pop)" },
+    { key: "speed-silver", name: "Cherry MX Speed Silver (Fast Linear)" },
+    { key: "cherry-red", name: "Cherry MX Red (Smooth Linear)" },
+    { key: "razer-green", name: "Razer Green (Loud Clicky)" }
   ]
 
   function getSoundPackName(key) {
@@ -150,11 +150,11 @@ Item {
     }
   }
 
-  // Auto-build binary if missing or start engine
+  // Auto-build binary if missing or incompatible architecture
   Process {
     id: checkOrBuildProc
     running: false
-    command: ["sh", "-c", "if [ ! -f \"" + root.getBinaryPath() + "\" ]; then make -C \"" + root.getPluginDir() + "/backend\"; fi"]
+    command: ["sh", "-c", "if [ ! -f \"" + root.getBinaryPath() + "\" ] || ! \"" + root.getBinaryPath() + "\" --ping >/dev/null 2>&1; then make -C \"" + root.getPluginDir() + "/backend\" clean && make -C \"" + root.getPluginDir() + "/backend\"; fi"]
 
     onExited: exitCode => {
       if (exitCode === 0) {

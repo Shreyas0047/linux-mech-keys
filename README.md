@@ -43,16 +43,16 @@ Every major switch category is included out-of-the-box:
 
 | Switch Profile | Switch Class | Acoustic Signature |
 | :--- | :--- | :--- |
-| **🟢 Kailh Box Jade** | Clickbar Clicky | Extremely sharp, crisp, high-pitched mechanical clickbar tactility. |
-| **🟡 NovelKeys Creams** | POM Linear | Signature deep enthusiast "thock" with full-POM housing resonance. |
-| **🍌 Banana Split Lubed** | Custom Linear | Buttery-smooth, creamy bottom-out pop beloved by keyboard builders. |
-| **🔵 Cherry MX Blue** | Iconic Clicky | The legendary standard mechanical click with sharp tactile actuation. |
-| **💜 Akko Lavender Purple** | Tactile Bump | Snappy early tactile bump with a bright, clacky report. |
-| **🟤 Cherry MX Brown** | Subtle Tactile | Classic, understated tactile feel suited for quiet office environments. |
-| **👑 Topre Purple Hybrid** | Electro-Capacitive | Deep acoustic "thock-pop" characteristic of Japanese domes. |
-| **⚡ Cherry MX Speed Silver** | Short-Travel Linear | Crisp, feather-light bottom-out tailored for fast competitive typing. |
-| **🔴 Cherry MX Red** | Smooth Linear | Soft, lightweight linear glide without click resistance. |
-| **🐍 Razer Green** | Loud Gaming Clicky | Punchy, clicky gaming switch sound with pronounced return clack. |
+| **Kailh Box Jade** | Clickbar Clicky | Extremely sharp, crisp, high-pitched mechanical clickbar tactility. |
+| **NovelKeys Creams** | POM Linear | Signature deep enthusiast "thock" with full-POM housing resonance. |
+| **Banana Split Lubed** | Custom Linear | Buttery-smooth, creamy bottom-out pop beloved by keyboard builders. |
+| **Cherry MX Blue** | Iconic Clicky | The legendary standard mechanical click with sharp tactile actuation. |
+| **Akko Lavender Purple** | Tactile Bump | Snappy early tactile bump with a bright, clacky report. |
+| **Cherry MX Brown** | Subtle Tactile | Classic, understated tactile feel suited for quiet office environments. |
+| **Topre Purple Hybrid** | Electro-Capacitive | Deep acoustic "thock-pop" characteristic of Japanese domes. |
+| **Cherry MX Speed Silver** | Short-Travel Linear | Crisp, feather-light bottom-out tailored for fast competitive typing. |
+| **Cherry MX Red** | Smooth Linear | Soft, lightweight linear glide without click resistance. |
+| **Razer Green** | Loud Gaming Clicky | Punchy, clicky gaming switch sound with pronounced return clack. |
 
 ### 🎛️ 6. Full Noctalia Settings Panel
 - **Master Toggle:** Enable or disable typing sound effects.

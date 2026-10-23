@@ -9,9 +9,12 @@
 
 Transform your Linux typing into an authentic, tactile mechanical keyboard soundscape.
 
+> [!NOTE]
+> **Origins & Compatibility:** This project was originally developed as a plugin for the **Noctalia Desktop Shell**, but has been designed with a modular architecture so that it can also be used across **any Linux distribution and desktop environment / window manager** (Hyprland, Sway, i3, GNOME, KDE Plasma, XFCE, etc.) without requiring Noctalia!
+
 Designed with a dual architecture:
 1. **Full Noctalia Shell Plugin:** Interactive top/bottom bar pill widget, full GUI settings popup, volume slider, and toast notices.
-2. **Standalone Daemon for Any Linux Setup:** Can be used on **any desktop environment or window manager** (Hyprland, Sway, i3, GNOME, KDE Plasma, XFCE, etc.) without Noctalia installed!
+2. **Standalone Daemon for Any Linux Setup:** Can be used on **any desktop environment or window manager** without Noctalia installed!
 
 Whether you're typing on a flat laptop keyboard or miss the deep acoustic thock and crisp click of enthusiast mechanical switches, `mech-keys` brings instant, sub-millisecond polyphonic feedback for every keypress with zero latency, zero bloat, and zero external dependencies.
 

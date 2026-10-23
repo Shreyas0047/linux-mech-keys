@@ -4,6 +4,9 @@ Bring back the satisfying tactile vibe of typing on a real mechanical keyboard t
 
 Designed specifically for **Noctalia Shell** (and Wayland environments like Niri, Hyprland, Sway), this plugin provides instant, sub-millisecond mechanical keyboard sound feedback with native bar integration, volume control, and 10 hand-curated audiophile switch profiles.
 
+> [!NOTE]
+> While originally developed as a native Noctalia plugin, the core audio engine is completely modular and can also be used standalone across **any Linux distribution and desktop environment / window manager** without Noctalia.
+
 ---
 
 ## ✨ Features

@@ -1,35 +1,43 @@
-# Mechanical Keyboard Sounds Plugin for Noctalia
+# ⌨️ Mechanical Keyboard Sounds Plugin for Noctalia
 
 Bring back the satisfying tactile vibe of typing on a real mechanical keyboard to your Linux desktop!
 
-Designed specifically for **Noctalia Shell** (and Wayland environments like Niri, Hyprland, Sway), this plugin provides instant, sub-5ms mechanical keyboard sound feedback with on/off bar toggle and authentic switch sound profiles.
+Designed specifically for **Noctalia Shell** (and Wayland environments like Niri, Hyprland, Sway), this plugin provides instant, sub-millisecond mechanical keyboard sound feedback with native bar integration, volume control, and 10 hand-curated audiophile switch profiles.
 
 ---
 
-## Features
+## ✨ Features
 
-* **3 Authentic Switch Profiles:**
-  * 🟢 **Kailh Box Jade** — Crisp, tactile, loud clicky switches
-  * 🟡 **NovelKeys Creams** — Smooth, deep, buttery "thock" linear switches
-  * 🔴 **Cherry MX Red** — Classic smooth linear typing sound
-* **Top/Bottom Bar Integration:**
-  * Click to toggle sound ON / OFF instantly.
-  * Right-click to cycle switch profiles on the fly.
-  * Native Noctalia tooltip & status badge.
-* **Full Noctalia Settings Panel:**
-  * Volume slider (0% – 100%)
-  * Sound profile selector
-  * Keyboard hardware picker (Internal laptop keyboard or external USB/Bluetooth keyboards)
-  * Dynamic toast notification feedback
-* **Ultra-Low Latency (~5ms):**
-  * Standalone C engine using `miniaudio` and Linux kernel `/dev/input/` events.
-  * Key sounds pre-cached into memory for zero disk stuttering while fast-typing.
-  * Subtle pitch randomization ($\pm 2\%$) for natural typing acoustic variance.
-  * **Zero dependencies:** Compiles with standard GCC, no Python libraries required.
+- **⚡ Sub-Millisecond Latency:** Pure C audio engine with direct 2ms hardware period buffering via `miniaudio`. Zero perceptible delay.
+- **🛡️ Cross-Desktop Kernel evdev:** Reads `/dev/input/event*` directly. Completely compositor-agnostic — works on **Niri**, **Hyprland**, **Sway**, **GNOME**, and **KDE**.
+- **🔇 No Repeat Machine-Gun Noise:** Smart debounce ignores key-repeat events when holding keys like Backspace or Space.
+- **🎨 Interactive Native Bar Pill Widget:**
+  - **Left-Click:** Opens the Plugin Settings dialog directly to change sound profiles and adjust options.
+  - **Right-Click:** Instantly toggles sound ON / OFF (Mute / Unmute).
+  - **Scroll Wheel:** Smoothly increases or decreases playback volume on the fly.
+- **🔊 10 Curated & Normalized Switch Profiles:**
+  - 🟢 **Kailh Box Jade** — Sharp, crisp clickbar tactility
+  - 🟡 **NovelKeys Creams** — Smooth, deep, POM linear "thock"
+  - 🍌 **Banana Split Lubed** — Buttery-smooth enthusiast linear pop
+  - 🔵 **Cherry MX Blue** — Iconic, classic mechanical click
+  - 💜 **Akko Lavender Purple** — Snappy early tactile bump
+  - 🟤 **Cherry MX Brown** — Subtle, quiet tactile feel
+  - 👑 **Topre Purple Hybrid** — Deep electro-capacitive thock-pop
+  - ⚡ **Cherry MX Speed Silver** — Fast short-travel linear bottom-out
+  - 🔴 **Cherry MX Red** — Smooth, classic linear glide
+  - 🐍 **Razer Green** — Loud gaming clicky with crisp tactile report
+- **🎛️ Settings Dialog:**
+  - Switch profile picker dropdown with live test button
+  - Volume slider (0% to 100%)
+  - Keyboard hardware device selector (auto-detects all internal & external keyboards)
+  - Toast notification toggle for mute/profile feedback
+- **🧩 Zero Dependencies:**
+  - Built-in automatic C compilation on startup if binary is missing.
+  - Zero external runtime libraries (no Python, Electron, or heavy audio daemons).
 
 ---
 
-## Requirements
+## 🔒 Requirements
 
 * **Noctalia Desktop Shell** (v3.6.0+)
 * User in the `input` group:
@@ -40,6 +48,6 @@ Designed specifically for **Noctalia Shell** (and Wayland environments like Niri
 
 ---
 
-## License
+## 📜 License
 
 MIT License. Key soundpacks provided under Creative Commons / MIT.

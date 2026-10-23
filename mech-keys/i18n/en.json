@@ -4,8 +4,8 @@
     "description": "Simulate authentic tactile and clicky mechanical keyboard typing sounds with bar toggle and sound packs."
   },
   "bar": {
-    "tooltip-on": "Mechanical Keyboard: Active ({pack})\nLeft-click: Toggle Mute | Right-click: Switch Profile",
-    "tooltip-off": "Mechanical Keyboard: Muted\nLeft-click: Enable Sound"
+    "tooltip-on": "Mechanical Keyboard: Active ({pack})\n• Left-click: Open Settings\n• Right-click: Mute / Unmute\n• Scroll: Adjust Volume",
+    "tooltip-off": "Mechanical Keyboard: Muted\n• Left-click: Open Settings\n• Right-click: Unmute"
   },
   "toast": {
     "enabled": "Typing sounds enabled",

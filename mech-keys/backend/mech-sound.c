@@ -105,18 +105,18 @@ int load_soundpack(const char *dir_path) {
                 int keycode = parse_name_to_evdev(ent->d_name);
 
                 g_sounds[g_sound_count].keycode = keycode;
-                strncpy(g_sounds[g_sound_count].path, wav_full, MAX_PATH_LEN - 1);
+                snprintf(g_sounds[g_sound_count].path, sizeof(g_sounds[g_sound_count].path), "%s", wav_full);
 
                 if (keycode == 57 || strcasestr(ent->d_name, "space")) {
-                    strncpy(g_space_wav, wav_full, MAX_PATH_LEN - 1);
+                    snprintf(g_space_wav, sizeof(g_space_wav), "%s", wav_full);
                 } else if (keycode == 28 || strcasestr(ent->d_name, "enter") || strstr(ent->d_name, "ent.")) {
-                    strncpy(g_enter_wav, wav_full, MAX_PATH_LEN - 1);
+                    snprintf(g_enter_wav, sizeof(g_enter_wav), "%s", wav_full);
                 } else if (keycode == 14 || strcasestr(ent->d_name, "back")) {
-                    strncpy(g_backspace_wav, wav_full, MAX_PATH_LEN - 1);
+                    snprintf(g_backspace_wav, sizeof(g_backspace_wav), "%s", wav_full);
                 }
 
                 if (keycode == 30 || g_default_wav[0] == '\0') {
-                    strncpy(g_default_wav, wav_full, MAX_PATH_LEN - 1);
+                    snprintf(g_default_wav, sizeof(g_default_wav), "%s", wav_full);
                 }
 
                 g_sound_count++;
@@ -240,8 +240,8 @@ int add_device(int epoll_fd, const char *dev_path) {
     }
 
     g_devices[g_device_count].fd = fd;
-    strncpy(g_devices[g_device_count].path, dev_path, MAX_PATH_LEN - 1);
-    strncpy(g_devices[g_device_count].name, name, sizeof(g_devices[g_device_count].name) - 1);
+    snprintf(g_devices[g_device_count].path, sizeof(g_devices[g_device_count].path), "%s", dev_path);
+    snprintf(g_devices[g_device_count].name, sizeof(g_devices[g_device_count].name), "%s", name);
     g_device_count++;
 
     if (g_debug) {

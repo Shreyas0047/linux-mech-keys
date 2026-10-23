@@ -38,9 +38,10 @@ Item {
 
     tooltipText: {
       if (root.enabledSound) {
-        return "Mechanical Keyboard: Active (" + root.packName + ")\n• Left-click: Open Settings\n• Right-click: Mute / Unmute\n• Scroll: Adjust Volume";
+        var str = pluginApi?.tr("bar.tooltip-on") || "Mechanical Keyboard: Active ({pack})\n• Left-click: Open Settings\n• Right-click: Mute / Unmute\n• Scroll: Adjust Volume";
+        return str.replace("{pack}", root.packName);
       } else {
-        return "Mechanical Keyboard: Muted\n• Left-click: Open Settings\n• Right-click: Unmute";
+        return pluginApi?.tr("bar.tooltip-off") || "Mechanical Keyboard: Muted\n• Left-click: Open Settings\n• Right-click: Unmute";
       }
     }
 

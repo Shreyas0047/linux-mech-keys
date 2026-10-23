@@ -1,0 +1,42 @@
+{
+  "plugin": {
+    "name": "Mechanical Keyboard",
+    "description": "Simulate authentic tactile and clicky mechanical keyboard typing sounds with bar toggle and sound packs."
+  },
+  "bar": {
+    "tooltip-on": "Mechanical Keyboard: Active ({pack})\nLeft-click: Toggle Mute | Right-click: Switch Profile",
+    "tooltip-off": "Mechanical Keyboard: Muted\nLeft-click: Enable Sound"
+  },
+  "toast": {
+    "enabled": "Typing sounds enabled",
+    "muted": "Typing sounds muted",
+    "switched": "Switched to {pack}"
+  },
+  "settings": {
+    "general-header": "General Settings",
+    "enabled": {
+      "label": "Enable Mechanical Typing Sounds",
+      "desc": "Play authentic mechanical switch sound feedback whenever typing"
+    },
+    "soundPack": {
+      "label": "Switch Sound Profile",
+      "desc": "Choose your preferred mechanical keyboard switch type"
+    },
+    "volume": {
+      "label": "Sound Volume",
+      "desc": "Adjust playback loudness of typing sound effects"
+    },
+    "inputDevice": {
+      "label": "Keyboard Device",
+      "desc": "Select specific keyboard hardware or auto-listen to all keyboards"
+    },
+    "enableToasts": {
+      "label": "Notification Toasts",
+      "desc": "Display feedback toast notifications when toggling sound or switching profiles"
+    },
+    "testButton": {
+      "label": "Preview Sound",
+      "button": "Test Click"
+    }
+  }
+}

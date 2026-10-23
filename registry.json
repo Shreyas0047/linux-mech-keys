@@ -1,0 +1,21 @@
+{
+  "name": "Custom Noctalia Plugins",
+  "description": "Custom high-quality community plugins for Noctalia desktop shell",
+  "plugins": [
+    {
+      "id": "mech-keys",
+      "name": "Mechanical Keyboard",
+      "version": "1.0.0",
+      "minNoctaliaVersion": "3.6.0",
+      "author": "Shreyas",
+      "license": "MIT",
+      "description": "Simulate authentic tactile and clicky mechanical keyboard typing sounds with bar toggle and sound packs.",
+      "tags": [
+        "Bar",
+        "Audio",
+        "Keyboard",
+        "Fun"
+      ]
+    }
+  ]
+}

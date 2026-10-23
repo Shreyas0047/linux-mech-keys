@@ -1,0 +1,7 @@
+# Build artifacts
+*.o
+*.a
+*.so
+.DS_Store
+*.swp
+*~

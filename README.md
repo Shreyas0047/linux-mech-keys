@@ -124,7 +124,7 @@ sudo usermod -aG input $USER
 2. Go to **Plugins** → **Sources** tab.
 3. Click **Add Source** and enter your repository URL:
    ```text
-   https://github.com/<your-username>/noctalia-mech-keys
+   https://github.com/<your-username>/linux-mech-keys
    ```
 4. Switch to the **Explore** tab, search for **Mechanical Keyboard** (`mech-keys`), and click **Install**.
 5. Add the **Mechanical Keyboard** widget to your bar in **Settings** → **Bar** → **Widgets**.
@@ -132,11 +132,11 @@ sudo usermod -aG input $USER
 #### Via Manual Symlink
 ```bash
 # 1. Clone repository
-git clone https://github.com/<your-username>/noctalia-mech-keys.git ~/noctalia-mech-keys
+git clone https://github.com/<your-username>/linux-mech-keys.git ~/linux-mech-keys
 
 # 2. Symlink into Noctalia
 mkdir -p ~/.config/noctalia/plugins
-ln -s ~/noctalia-mech-keys/mech-keys ~/.config/noctalia/plugins/mech-keys
+ln -s ~/linux-mech-keys/mech-keys ~/.config/noctalia/plugins/mech-keys
 
 # 3. Reload Noctalia
 qs -c noctalia-shell kill && sleep 1 && qs -c noctalia-shell -d
@@ -150,15 +150,15 @@ You do **not** need Noctalia to use this sound engine! The backend `mech-sound` 
 
 #### 1. Compile the Binary (One command, zero external libraries)
 ```bash
-git clone https://github.com/<your-username>/noctalia-mech-keys.git ~/noctalia-mech-keys
-cd ~/noctalia-mech-keys/mech-keys/backend
+git clone https://github.com/<your-username>/linux-mech-keys.git ~/linux-mech-keys
+cd ~/linux-mech-keys/mech-keys/backend
 make
 ```
 
 #### 2. Run Directly from Terminal
 ```bash
 # Run with any switch soundpack (e.g. NovelKeys Creams):
-~/noctalia-mech-keys/mech-keys/bin/mech-sound --pack ~/noctalia-mech-keys/mech-keys/sounds/creams --volume 0.85
+~/linux-mech-keys/mech-keys/bin/mech-sound --pack ~/linux-mech-keys/mech-keys/sounds/creams --volume 0.85
 
 # Or choose any of the 10 soundpacks:
 # akko-lavender, banana-split, boxjade, cherry-blue, cherry-brown, cherry-red, creams, razer-green, speed-silver, topre
@@ -190,12 +190,12 @@ To automatically start typing sounds when you log in to your desktop:
 
 - **Hyprland (`~/.config/hypr/hyprland.conf`):**
   ```ini
-  exec-once = ~/noctalia-mech-keys/mech-keys/bin/mech-sound --pack ~/noctalia-mech-keys/mech-keys/sounds/creams --volume 0.85
+  exec-once = ~/linux-mech-keys/mech-keys/bin/mech-sound --pack ~/linux-mech-keys/mech-keys/sounds/creams --volume 0.85
   ```
 
 - **Sway / i3 (`~/.config/sway/config` or `~/.config/i3/config`):**
   ```ini
-  exec ~/noctalia-mech-keys/mech-keys/bin/mech-sound --pack ~/noctalia-mech-keys/mech-keys/sounds/creams --volume 0.85
+  exec ~/linux-mech-keys/mech-keys/bin/mech-sound --pack ~/linux-mech-keys/mech-keys/sounds/creams --volume 0.85
   ```
 
 - **GNOME / KDE / XFCE (`~/.config/autostart/mech-sound.desktop`):**
@@ -203,7 +203,7 @@ To automatically start typing sounds when you log in to your desktop:
   [Desktop Entry]
   Type=Application
   Name=Mechanical Keyboard Sounds
-  Exec=sh -c "$HOME/noctalia-mech-keys/mech-keys/bin/mech-sound --pack $HOME/noctalia-mech-keys/mech-keys/sounds/creams --volume 0.85"
+  Exec=sh -c "$HOME/linux-mech-keys/mech-keys/bin/mech-sound --pack $HOME/linux-mech-keys/mech-keys/sounds/creams --volume 0.85"
   Hidden=false
   NoDisplay=false
   X-GNOME-Autostart-enabled=true
@@ -216,7 +216,7 @@ To automatically start typing sounds when you log in to your desktop:
   After=sound.target
 
   [Service]
-  ExecStart=%h/noctalia-mech-keys/mech-keys/bin/mech-sound --pack %h/noctalia-mech-keys/mech-keys/sounds/creams --volume 0.85
+  ExecStart=%h/linux-mech-keys/mech-keys/bin/mech-sound --pack %h/linux-mech-keys/mech-keys/sounds/creams --volume 0.85
   Restart=on-failure
 
   [Install]

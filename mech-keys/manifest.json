@@ -5,7 +5,7 @@
   "minNoctaliaVersion": "3.6.0",
   "author": "Shreyas",
   "license": "MIT",
-  "repository": "https://github.com/shreyas/noctalia-mech-keys",
+  "repository": "https://github.com/shreyas/linux-mech-keys",
   "description": "Simulate authentic tactile and clicky mechanical keyboard typing sounds with bar toggle and sound packs.",
   "tags": [
     "Bar",

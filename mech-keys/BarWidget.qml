@@ -38,14 +38,22 @@ Item {
 
     tooltipText: {
       if (root.enabledSound) {
-        return "Mechanical Keyboard: Active (" + root.packName + ")\n• Left-click: Mute\n• Right-click: Switch Switch\n• Scroll wheel: Adjust Volume";
+        return "Mechanical Keyboard: Active (" + root.packName + ")\n• Left-click: Open Settings\n• Right-click: Mute / Unmute\n• Scroll: Adjust Volume";
       } else {
-        return "Mechanical Keyboard: Muted\n• Left-click: Unmute";
+        return "Mechanical Keyboard: Muted\n• Left-click: Open Settings\n• Right-click: Unmute";
       }
     }
 
-    onClicked: mainInstance?.toggleSound()
-    onRightClicked: mainInstance?.cycleSoundPack()
+    onClicked: {
+      if (pluginApi && pluginApi.manifest) {
+        BarService.openPluginSettings(root.screen, pluginApi.manifest);
+      }
+    }
+
+    onRightClicked: {
+      mainInstance?.toggleSound();
+    }
+
     onWheel: function(delta) {
       if (!mainInstance) return;
       var step = (delta > 0 ? 0.05 : -0.05);

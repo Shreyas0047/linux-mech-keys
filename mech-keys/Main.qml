@@ -150,19 +150,20 @@ Item {
     }
   }
 
-  // Auto-build binary if missing
+  // Auto-build binary if missing or start engine
   Process {
-    id: buildProc
+    id: checkOrBuildProc
     running: false
-    command: ["make", "-C", root.getPluginDir() + "/backend"]
+    command: ["sh", "-c", "if [ ! -f \"" + root.getBinaryPath() + "\" ]; then make -C \"" + root.getPluginDir() + "/backend\"; fi"]
 
     onExited: exitCode => {
       if (exitCode === 0) {
-        Logger.i("MechKeys", "Backend built successfully");
-        startEngine();
+        Logger.i("MechKeys", "Backend binary ready");
       } else {
-        Logger.e("MechKeys", "Backend build failed with code " + exitCode);
+        Logger.w("MechKeys", "Build check exited with code " + exitCode);
       }
+      soundProc.running = true;
+      listDevicesProc.running = true;
     }
   }
 
@@ -181,9 +182,7 @@ Item {
     const bin = getBinaryPath();
     if (!bin) return;
 
-    // Check if binary exists or build it
-    soundProc.running = true;
-    listDevicesProc.running = true;
+    checkOrBuildProc.running = true;
   }
 
   Component.onCompleted: {

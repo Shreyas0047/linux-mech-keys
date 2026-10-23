@@ -46,20 +46,11 @@ static char g_pack_dir[MAX_PATH_LEN] = "";
 static InputDevice g_devices[MAX_DEVICES];
 static int g_device_count = 0;
 static volatile int g_running = 1;
-static FILE *g_log = NULL;
+static int g_debug = 0;
 
 void sig_handler(int sig) {
     (void)sig;
     g_running = 0;
-}
-
-void log_msg(const char *fmt, ...) {
-    if (!g_log) return;
-    va_list args;
-    va_start(args, fmt);
-    vfprintf(g_log, fmt, args);
-    va_end(args);
-    fflush(g_log);
 }
 
 static int parse_name_to_evdev(const char *name) {
@@ -103,7 +94,6 @@ int load_soundpack(const char *dir_path) {
     unload_soundpack();
 
     strncpy(g_pack_dir, dir_path, sizeof(g_pack_dir) - 1);
-    log_msg("Loading sound pack from %s\n", dir_path);
 
     DIR *d = opendir(dir_path);
     if (d) {
@@ -135,11 +125,13 @@ int load_soundpack(const char *dir_path) {
         closedir(d);
     }
 
-    log_msg("Loaded %d sound files. Default sound: %s\n", g_sound_count, g_default_wav);
-    fprintf(stderr, "Loaded sound pack '%s' (%d key sounds)\n", dir_path, g_sound_count);
+    if (g_debug) {
+        fprintf(stderr, "Loaded sound pack '%s' (%d key sounds)\n", dir_path, g_sound_count);
+    }
     return g_sound_count > 0;
 }
 
+// Low-latency critical path
 void play_key(int keycode, int is_press) {
     if (g_muted || !is_press || g_sound_count == 0) {
         return;
@@ -174,8 +166,7 @@ void play_key(int keycode, int is_press) {
     }
 
     if (wav) {
-        ma_result r = ma_engine_play_sound(&g_engine, wav, NULL);
-        log_msg("PLAY: keycode=%d, file=%s, res=%d\n", keycode, wav, r);
+        ma_engine_play_sound(&g_engine, wav, NULL);
     }
 }
 
@@ -234,7 +225,6 @@ int add_device(int epoll_fd, const char *dev_path) {
 
     int fd = open(dev_path, O_RDONLY | O_NONBLOCK);
     if (fd < 0) {
-        log_msg("Could not open device %s: %s\n", dev_path, strerror(errno));
         return -1;
     }
 
@@ -245,7 +235,6 @@ int add_device(int epoll_fd, const char *dev_path) {
     ev.events = EPOLLIN;
     ev.data.fd = fd;
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &ev) < 0) {
-        log_msg("epoll_ctl ADD failed for %s: %s\n", dev_path, strerror(errno));
         close(fd);
         return -1;
     }
@@ -255,8 +244,9 @@ int add_device(int epoll_fd, const char *dev_path) {
     strncpy(g_devices[g_device_count].name, name, sizeof(g_devices[g_device_count].name) - 1);
     g_device_count++;
 
-    log_msg("Listening to keyboard: %s (%s) on fd %d\n", name, dev_path, fd);
-    fprintf(stderr, "Listening to keyboard: %s (%s)\n", name, dev_path);
+    if (g_debug) {
+        fprintf(stderr, "Listening to keyboard: %s (%s)\n", name, dev_path);
+    }
     return fd;
 }
 
@@ -276,7 +266,6 @@ int auto_detect_devices(int epoll_fd) {
 }
 
 void handle_ipc_command(const char *cmd) {
-    log_msg("IPC RECV: %s\n", cmd);
     if (strncmp(cmd, "VOLUME ", 7) == 0) {
         g_volume = atof(cmd + 7);
         if (g_volume < 0.0f) g_volume = 0.0f;
@@ -304,9 +293,6 @@ void handle_ipc_command(const char *cmd) {
 }
 
 int main(int argc, char **argv) {
-    g_log = fopen("/tmp/mech-sound.log", "w");
-    log_msg("mech-sound starting up...\n");
-
     char specific_device[MAX_PATH_LEN] = "";
     char pack_path[MAX_PATH_LEN] = "";
     float initial_volume = 1.0f;
@@ -324,24 +310,33 @@ int main(int argc, char **argv) {
             initial_volume = atof(argv[++i]);
         } else if (strcmp(argv[i], "--mute") == 0 || strcmp(argv[i], "-m") == 0) {
             initial_mute = 1;
+        } else if (strcmp(argv[i], "--debug") == 0) {
+            g_debug = 1;
         }
     }
 
     signal(SIGINT, sig_handler);
     signal(SIGTERM, sig_handler);
 
+    // Ultra low-latency engine configuration (2ms buffer request)
     ma_engine_config engineConfig = ma_engine_config_init();
+    engineConfig.channels = 2;
+    engineConfig.sampleRate = 44100;
+    engineConfig.periodSizeInMilliseconds = 2;
+
     ma_result res = ma_engine_init(&engineConfig, &g_engine);
     if (res != MA_SUCCESS) {
-        log_msg("Audio engine init failed: %d\n", res);
-        fprintf(stderr, "Failed to initialize audio engine: error %d\n", res);
-        return 1;
+        // Fallback to default engine init
+        res = ma_engine_init(NULL, &g_engine);
+        if (res != MA_SUCCESS) {
+            fprintf(stderr, "Failed to initialize audio engine: error %d\n", res);
+            return 1;
+        }
     }
     g_engine_inited = 1;
     g_volume = initial_volume;
     g_muted = initial_mute;
     ma_engine_set_volume(&g_engine, g_volume);
-    log_msg("Audio engine initialized, vol=%.2f, mute=%d\n", g_volume, g_muted);
 
     if (strlen(pack_path) > 0) {
         load_soundpack(pack_path);
@@ -349,7 +344,6 @@ int main(int argc, char **argv) {
 
     int epoll_fd = epoll_create1(0);
     if (epoll_fd < 0) {
-        log_msg("epoll_create1 failed: %s\n", strerror(errno));
         return 1;
     }
 
@@ -365,8 +359,6 @@ int main(int argc, char **argv) {
     } else {
         auto_detect_devices(epoll_fd);
     }
-
-    log_msg("Total input devices added: %d\n", g_device_count);
 
     printf("READY\n");
     fflush(stdout);
@@ -401,7 +393,6 @@ int main(int argc, char **argv) {
                         }
                     }
                 } else if (r == 0) {
-                    log_msg("stdin closed, exiting\n");
                     g_running = 0;
                 }
             } else {
@@ -411,7 +402,6 @@ int main(int argc, char **argv) {
                     int count = bytes / sizeof(struct input_event);
                     for (int k = 0; k < count; k++) {
                         if (ev[k].type == EV_KEY) {
-                            log_msg("KEY EVENT: fd=%d, code=%d, val=%d\n", fd, ev[k].code, ev[k].value);
                             // Only play sound on initial key press (value == 1).
                             // Ignore repeat events (value == 2) so holding a key doesn't trigger continuous sounds.
                             if (ev[k].value == 1) {
@@ -430,8 +420,6 @@ int main(int argc, char **argv) {
     close(epoll_fd);
     unload_soundpack();
     ma_engine_uninit(&g_engine);
-    log_msg("mech-sound exited cleanly\n");
-    if (g_log) fclose(g_log);
 
     return 0;
 }

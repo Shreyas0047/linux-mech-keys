@@ -1,278 +1,143 @@
-# ⌨️ Mechanical Keyboard Typing Sounds (`mech-keys`)
+# linux-mech-keys
 
-[![Noctalia Shell](https://img.shields.io/badge/Noctalia%20Shell-v3.6%2B%20Plugin-blue?style=for-the-badge&logo=gnome)](https://github.com/noctalia-dev/noctalia-shell)
-[![Standalone](https://img.shields.io/badge/Standalone-Any%20Linux%20Desktop%20%2F%20WM-orange?style=for-the-badge&logo=linux)](https://kernel.org)
-[![Platform](https://img.shields.io/badge/Platform-Wayland%20%26%20X11-purple?style=for-the-badge&logo=linux)](https://kernel.org)
-[![Audio Backend](https://img.shields.io/badge/Latency-%3C2ms%20Hardware%20Buffer-success?style=for-the-badge&logo=c)](https://miniaud.io)
-[![Binary Size](https://img.shields.io/badge/Binary%20Size-%3C500KB-informational?style=for-the-badge&logo=webassembly)](https://github.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](https://opensource.org/licenses/MIT)
+A lightweight mechanical keyboard sound simulator for Linux. Works as a native Noctalia Shell plugin or as a standalone background daemon on any desktop environment / window manager (Wayland & X11).
 
-Transform your Linux typing into an authentic, tactile mechanical keyboard soundscape.
+## Why I made this
 
-> [!NOTE]
-> **Origins & Compatibility:** This project was originally developed as a plugin for the **Noctalia Desktop Shell**, but has been designed with a modular architecture so that it can also be used across **any Linux distribution and desktop environment / window manager** (Hyprland, Sway, i3, GNOME, KDE Plasma, XFCE, etc.) without requiring Noctalia!
+I use a laptop with limited desk space, but I missed the sound and feel of typing on a physical mechanical keyboard.
 
-Designed with a dual architecture:
-1. **Full Noctalia Shell Plugin:** Interactive top/bottom bar pill widget, full GUI settings popup, volume slider, and toast notices.
-2. **Standalone Daemon for Any Linux Setup:** Can be used on **any desktop environment or window manager** without Noctalia installed!
+Most existing alternatives on Linux (like Mechvibes) are heavy Electron applications that consume 200MB+ RAM and frequently break on modern Wayland compositors because they depend on legacy X11 global input hooks. Other tools were either CLI-only, had perceptible audio latency, or lacked desktop shell integration.
 
-Whether you're typing on a flat laptop keyboard or miss the deep acoustic thock and crisp click of enthusiast mechanical switches, `mech-keys` brings instant, sub-millisecond polyphonic feedback for every keypress with zero latency, zero bloat, and zero external dependencies.
+This project solves those issues:
+- **Low latency:** Written in pure C using `miniaudio` with a ~2ms hardware period buffer.
+- **Wayland-native:** Reads keystrokes directly from the Linux kernel via `/dev/input/event*` (evdev). Works everywhere: Niri, Hyprland, Sway, GNOME, KDE, or raw TTY.
+- **No machine-gun repeat:** Automatically filters out kernel key-repeat events (`value == 2`), so holding down Space or Backspace sounds natural.
+- **Polyphonic:** Plays multiple overlapping key sounds when typing fast without cutting off previous audio.
+- **Lightweight:** The core engine is under 500KB compiled, uses ~8MB of RAM, and has zero external runtime dependencies.
+- **Dual mode:** Can run as a standalone CLI daemon or integrated into the Noctalia desktop shell with a bar pill widget, volume controls, and a settings dialog.
 
 ---
 
-## 🌟 Comprehensive Feature List
+## Switch Profiles Included
 
-### ⚡ 1. Audio Engine & Performance
-- **Sub-Millisecond Response (<2ms):** Pure C audio engine utilizing `miniaudio` with a direct hardware buffer (`periodSizeInMilliseconds = 2`) on ALSA, PipeWire, PulseAudio, or JACK.
-- **Polyphonic Multi-Voice Mixing:** Fast typists never experience cut-off audio; multiple key sounds overlap simultaneously with natural acoustic decay.
-- **Normalized Studio Acoustics:** All switch sounds are audio-mastered and amplitude-normalized (85% peak) to deliver punchy, crisp sound through both laptop speakers and high-end headphones.
-- **Zero Disk I/O on Keypress:** All sound samples are pre-indexed into memory for instantaneous actuation without frame drops or audio stuttering.
+The repository includes 10 switch soundpacks out of the box:
+- Kailh Box Jade (Clickbar Clicky)
+- NovelKeys Creams (POM Linear Thock)
+- Banana Split Lubed (Smooth Linear)
+- Cherry MX Blue (Clicky)
+- Akko Lavender Purple (Tactile)
+- Cherry MX Brown (Subtle Tactile)
+- Topre Purple Hybrid (Electro-Capacitive)
+- Cherry MX Speed Silver (Fast Linear)
+- Cherry MX Red (Classic Linear)
+- Razer Green (Clicky)
 
-### 🛡️ 2. Cross-Desktop & Wayland Input System
-- **Wayland-Independent Key Capture:** Listens directly to Linux kernel `evdev` (`/dev/input/event*`), completely bypassing Wayland's global keystroke isolation.
-- **Universal Desktop Compatibility:** Works out-of-the-box on **Niri**, **Hyprland**, **Sway**, **GNOME**, **KDE Plasma**, **i3**, **bspwm**, **XFCE**, **River**, **DWL**, or raw Linux TTY.
-- **Multi-Device Hardware Auto-Detection:** Dynamically scans `/dev/input/` and auto-listens to all connected keyboards simultaneously (internal laptop keyboard, external USB mechanical boards, and wireless Bluetooth keyboards).
-- **Dedicated Device Locking:** Optional argument/setting to lock audio triggers strictly to a specific physical keyboard hardware path.
-
-### 🔇 3. Smart Key-Repeat Debounce
-- **No Machine-Gun Noise:** Automatically filters out Linux kernel key-repeat events (`value == 2`). Holding down Backspace, Space, Enter, or arrows produces a clean, natural single click rather than an unnatural continuous roar.
-
-### 🎨 4. Native Noctalia Bar Widget (When using Noctalia)
-- **Authentic Noctalia Design:** Built with Noctalia's native `BarPill` component, automatically adapting to your active theme, color scheme, and bar placement.
-- **Dynamic Status Indicator:** Clean keyboard glyph (`keyboard` when active, dimmed `keyboard-off` when muted).
-- **Three-in-One Quick Controls:**
-  - **Left-Click:** Opens the Plugin Settings dialog directly to customize switches and audio.
-  - **Right-Click:** Toggles sound ON / OFF (Mute / Unmute) instantly.
-  - **Scroll Wheel:** Smoothly increases or decreases volume on the fly with live step increments.
-- **Informative Tooltip:** Displays active sound profile, volume state, and mouse shortcut guide.
-
-### 🎧 5. 10 Curated Mechanical Switch Soundpacks
-Every major switch category is included out-of-the-box:
-
-| Switch Profile | Switch Class | Acoustic Signature |
-| :--- | :--- | :--- |
-| **Kailh Box Jade** | Clickbar Clicky | Extremely sharp, crisp, high-pitched mechanical clickbar tactility. |
-| **NovelKeys Creams** | POM Linear | Signature deep enthusiast "thock" with full-POM housing resonance. |
-| **Banana Split Lubed** | Custom Linear | Buttery-smooth, creamy bottom-out pop beloved by keyboard builders. |
-| **Cherry MX Blue** | Iconic Clicky | The legendary standard mechanical click with sharp tactile actuation. |
-| **Akko Lavender Purple** | Tactile Bump | Snappy early tactile bump with a bright, clacky report. |
-| **Cherry MX Brown** | Subtle Tactile | Classic, understated tactile feel suited for quiet office environments. |
-| **Topre Purple Hybrid** | Electro-Capacitive | Deep acoustic "thock-pop" characteristic of Japanese domes. |
-| **Cherry MX Speed Silver** | Short-Travel Linear | Crisp, feather-light bottom-out tailored for fast competitive typing. |
-| **Cherry MX Red** | Smooth Linear | Soft, lightweight linear glide without click resistance. |
-| **Razer Green** | Loud Gaming Clicky | Punchy, clicky gaming switch sound with pronounced return clack. |
-
-### 🎛️ 6. Full Noctalia Settings Panel
-- **Master Toggle:** Enable or disable typing sound effects.
-- **Sound Profile Selector:** Select any of the 10 switch profiles with instant live switching.
-- **Volume Slider:** Fine-tuned 0% to 100% volume slider with real-time audio gain adjustment.
-- **Keyboard Device Selector:** Choose between auto-detecting all keyboards or binding to a specific device path.
-- **Notification Toasts Toggle:** Enable or disable visual popups when changing profiles or toggling mute.
-- **"Test Switch Profile" Button:** Preview your active switch sound directly inside settings before typing.
-
-### 🔔 7. Desktop Toast Notifications
-- Clean, non-intrusive Noctalia toasts confirming when sound is muted, unmuted, or when a new switch profile is activated.
-
-### ⌨️ 8. Quickshell IPC Commands
-Control `mech-keys` via shell scripts or bind commands directly to compositor shortcuts (e.g. in `niri.kdl` or `hyprland.conf`):
-
-```bash
-# Open Settings Dialog directly
-qs -c noctalia-shell ipc call plugin openSettings "mech-keys"
-
-# Toggle Mute / Unmute
-qs -c noctalia-shell ipc call "plugin:mech-keys" toggle
-
-# Cycle to the next switch soundpack in order
-qs -c noctalia-shell ipc call "plugin:mech-keys" cycle
-
-# Play a test keypress sound
-qs -c noctalia-shell ipc call "plugin:mech-keys" test
-```
-
-### 🪶 9. Minimalist & Bloat-Free Footprint
-- **Stripped Binary:** Stripped pure C binary compiled with only the required WAV decoder (`<500KB`).
-- **Zero Runtime Dependencies:** No Python, no Node.js, no Electron, no heavy background daemons.
-- **Self-Healing / Auto-Compilation:** `Main.qml` automatically tests the binary via `--ping`; if running on a non-x86_64 architecture (e.g. ARM64 / Raspberry Pi / Asahi Linux), it automatically runs `make -C backend` on startup.
-- **Total Package Size:** Less than 30MB total for all 10 uncompressed high-fidelity soundpacks combined.
-
-### 📂 10. Custom Soundpack Extensibility
-- Drop custom `.wav` files into `mech-keys/sounds/<pack-name>/`.
-- Compatible with Mechvibes soundpacks and custom recordings.
-- Intelligent keycode fallback: dedicated sounds for `Space`, `Enter`, and `Backspace`, with automatic fallback for all other keys.
+You can also drop in your own custom soundpacks or existing Mechvibes packs.
 
 ---
 
-## 🥊 How It Compares to Alternatives
+## Setup & Permissions
 
-| Feature / Metric | Mechvibes | Rustyvibes | Bucklespring | Klack | 🔥 **linux-mech-keys (This Project)** |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Technology** | Electron + Node.js | Rust (`rdev` / `rodio`) | C + OpenAL | Swift / Native | **Pure C (`miniaudio`) + QML** |
-| **Wayland Support** | ❌ Broken (relies on X11 hooks) | ⚠️ Partial / Fragile | ❌ X11 only | ❌ macOS only | ✅ **100% Universal (Direct kernel `evdev`)** |
-| **Audio Latency** | ~30–50 ms (Electron lag) | ~5–10 ms | ~5 ms | <5 ms | ⚡ **<2 ms (Sub-millisecond buffer)** |
-| **Resource Footprint** | ~200MB+ RAM (Chromium) | ~20MB RAM | ~15MB RAM | ~30MB RAM | 🪶 **<10MB RAM, <500KB stripped binary** |
-| **Shell / Bar Widget** | ❌ None (separate window) | ❌ CLI only | ❌ CLI only | macOS menu bar | ✅ **Native Noctalia Bar Pill + Settings UI** |
-| **Switch Options** | Multiple | Multiple | Only 1 (Model M) | Multiple | 🎧 **10 Curated Audiophile Profiles** |
-| **Key-Repeat Debounce** | ❌ Continuous machine-gun | ❌ Repeats continuously | ❌ Repeats continuously | ✅ Controlled | 🔇 **Smart filter (ignores repeat events)** |
-| **Platform** | Cross-platform | Cross-platform | Linux (X11) | macOS only (Paid) | 🐧 **Linux (Any Distro & Any Wayland/X11 DE)** |
-
-### Key Competitive Advantages
-
-1. **Wayland-Proof Input Architecture:**  
-   Most existing Linux typing-sound utilities rely on X11 hooks (`XRecord`, `XGrabKey`) which fail completely on modern Wayland compositors (Niri, Hyprland, Sway, GNOME Wayland). `linux-mech-keys` talks directly to `/dev/input/event*`, guaranteeing 100% reliability regardless of your display server.
-2. **Zero Electron Bloat:**  
-   Unlike Mechvibes (which requires a massive Chromium and Node.js runtime just to play sound effects), this project's backend is a pure, self-contained C binary compiling in under 2 seconds with zero runtime dependencies.
-3. **Sub-Millisecond Typing Responsiveness:**  
-   Audio lag ruins the illusion of physical switches. By configuring hardware period buffers to 2ms in `miniaudio` and eliminating all disk I/O from keypress hot paths, sounds fire instantaneously upon finger actuation.
-4. **First-Class Desktop Integration:**  
-   Rather than burying settings in a terminal or leaving a chunky app window open, you get a native Noctalia Bar widget with volume wheel scrolling, quick mute toggles, live switch test buttons, and toast alerts.
-
----
-
-## 🔒 Permission Setup (evdev access)
-
-To allow reading keystrokes from `/dev/input/event*` without root privileges, your user account must be part of the `input` group:
+Reading from `/dev/input/` requires your user account to have read access to the input devices. On most distributions, you just need to add yourself to the `input` group:
 
 ```bash
 sudo usermod -aG input $USER
 ```
 
-> **Note:** If you just added yourself to the `input` group, log out and log back in (or run `newgrp input`) for the group membership to take effect.
+*Note: You may need to log out and log back in (or run `newgrp input`) for the group change to take effect.*
 
 ---
 
-## 🚀 Installation & Usage
+## Usage
 
-### Mode A: With Noctalia Shell (GUI + Bar Widget)
+### Option 1: Standalone CLI Daemon (Any Desktop / WM)
 
-#### Via Noctalia Plugin Source (Recommended)
-1. Open **Noctalia Settings** (`Super + ,` or from Bar / Launcher).
-2. Go to **Plugins** → **Sources** tab.
-3. Click **Add Source** and enter your repository URL:
-   ```text
-   https://github.com/<your-username>/linux-mech-keys
-   ```
-4. Switch to the **Explore** tab, search for **Mechanical Keyboard** (`mech-keys`), and click **Install**.
-5. Add the **Mechanical Keyboard** widget to your bar in **Settings** → **Bar** → **Widgets**.
+You don't need Noctalia to use this. You can compile the C engine in two seconds and run it anywhere (Hyprland, Sway, i3, GNOME, KDE, XFCE):
 
-#### Via Manual Symlink
 ```bash
-# 1. Clone repository
-git clone https://github.com/<your-username>/linux-mech-keys.git ~/linux-mech-keys
-
-# 2. Symlink into Noctalia
-mkdir -p ~/.config/noctalia/plugins
-ln -s ~/linux-mech-keys/mech-keys ~/.config/noctalia/plugins/mech-keys
-
-# 3. Reload Noctalia
-qs -c noctalia-shell kill && sleep 1 && qs -c noctalia-shell -d
-```
-
----
-
-### Mode B: Standalone Usage (Without Noctalia — Any Linux Desktop / WM)
-
-You do **not** need Noctalia to use this sound engine! The backend `mech-sound` is a standalone, ultra-low latency C binary that runs on **any** Linux distribution and desktop environment (Hyprland, Sway, i3, GNOME, KDE Plasma, XFCE, bspwm, etc.).
-
-#### 1. Compile the Binary (One command, zero external libraries)
-```bash
+# Clone and build
 git clone https://github.com/<your-username>/linux-mech-keys.git ~/linux-mech-keys
 cd ~/linux-mech-keys/mech-keys/backend
 make
+
+# Run with a switch pack
+../bin/mech-sound --pack ../sounds/creams --volume 0.8
 ```
 
-#### 2. Run Directly from Terminal
-```bash
-# Run with any switch soundpack (e.g. NovelKeys Creams):
-~/linux-mech-keys/mech-keys/bin/mech-sound --pack ~/linux-mech-keys/mech-keys/sounds/creams --volume 0.85
-
-# Or choose any of the 10 soundpacks:
-# akko-lavender, banana-split, boxjade, cherry-blue, cherry-brown, cherry-red, creams, razer-green, speed-silver, topre
+#### CLI Options
+```text
+  --pack, -p <dir>      Path to soundpack folder (default: sounds/boxjade)
+  --volume, -v <0.0-1.0> Set volume (default: 1.0)
+  --device, -d <path>   Bind to a specific keyboard (default: auto-detect all)
+  --mute, -m            Start muted
+  --list-devices, -l    Print detected keyboards as JSON
+  --ping                Health-check (prints PONG and exits)
 ```
 
-#### 3. CLI Arguments Reference
-| Flag | Example | Description |
-| :--- | :--- | :--- |
-| `--pack`, `-p` | `--pack ./sounds/topre` | Path to switch soundpack directory. |
-| `--volume`, `-v` | `--volume 0.75` | Playback volume (`0.0` to `1.0`). |
-| `--device`, `-d` | `--device /dev/input/event3` | Bind strictly to one keyboard (default: auto-detects all keyboards). |
-| `--mute`, `-m` | `--mute` | Start muted. |
-| `--list-devices`, `-l` | `--list-devices` | Outputs JSON list of all detected keyboard hardware. |
-| `--ping` | `--ping` | Prints `PONG` and exits (quick architecture/health check). |
-
-#### 4. Real-Time Stdin Control
-The standalone engine accepts runtime commands piped through `stdin`:
-```bash
-VOLUME 0.6    # Adjust volume to 60%
-MUTE 1        # Mute audio feedback
-MUTE 0        # Unmute audio feedback
-PACK /path    # Switch soundpack on the fly
-TEST          # Play a test key click
-QUIT          # Terminate engine cleanly
-```
-
-#### 5. Autostart on Any Desktop / Window Manager
-To automatically start typing sounds when you log in to your desktop:
-
-- **Hyprland (`~/.config/hypr/hyprland.conf`):**
+#### Autostarting on login
+- **Hyprland (`hyprland.conf`):**
   ```ini
-  exec-once = ~/linux-mech-keys/mech-keys/bin/mech-sound --pack ~/linux-mech-keys/mech-keys/sounds/creams --volume 0.85
+  exec-once = ~/linux-mech-keys/mech-keys/bin/mech-sound --pack ~/linux-mech-keys/mech-keys/sounds/creams --volume 0.8
   ```
-
-- **Sway / i3 (`~/.config/sway/config` or `~/.config/i3/config`):**
+- **Sway / i3 (`config`):**
   ```ini
-  exec ~/linux-mech-keys/mech-keys/bin/mech-sound --pack ~/linux-mech-keys/mech-keys/sounds/creams --volume 0.85
+  exec ~/linux-mech-keys/mech-keys/bin/mech-sound --pack ~/linux-mech-keys/mech-keys/sounds/creams --volume 0.8
   ```
-
-- **GNOME / KDE / XFCE (`~/.config/autostart/mech-sound.desktop`):**
-  ```ini
-  [Desktop Entry]
-  Type=Application
-  Name=Mechanical Keyboard Sounds
-  Exec=sh -c "$HOME/linux-mech-keys/mech-keys/bin/mech-sound --pack $HOME/linux-mech-keys/mech-keys/sounds/creams --volume 0.85"
-  Hidden=false
-  NoDisplay=false
-  X-GNOME-Autostart-enabled=true
-  ```
-
-- **Systemd User Service (`~/.config/systemd/user/mech-sound.service`):**
+- **Systemd user service (`~/.config/systemd/user/mech-sound.service`):**
   ```ini
   [Unit]
   Description=Mechanical Keyboard Sound Daemon
   After=sound.target
 
   [Service]
-  ExecStart=%h/linux-mech-keys/mech-keys/bin/mech-sound --pack %h/linux-mech-keys/mech-keys/sounds/creams --volume 0.85
+  ExecStart=%h/linux-mech-keys/mech-keys/bin/mech-sound --pack %h/linux-mech-keys/mech-keys/sounds/creams --volume 0.8
   Restart=on-failure
 
   [Install]
   WantedBy=default.target
   ```
-  Enable and start it with: `systemctl --user enable --now mech-sound`
+  Enable with: `systemctl --user enable --now mech-sound`
 
 ---
 
-## 🏗️ Architecture
+### Option 2: Noctalia Shell Plugin (GUI & Bar Widget)
 
+If you use [Noctalia Shell](https://github.com/noctalia-dev/noctalia-shell):
+
+#### Install via Plugin Sources:
+1. Open Noctalia Settings -> Plugins -> Sources tab.
+2. Add: `https://github.com/<your-username>/linux-mech-keys`
+3. In the Explore tab, find **Mechanical Keyboard** and click Install.
+4. Add the widget to your bar in Settings -> Bar -> Widgets.
+
+#### Or manually symlink:
+```bash
+mkdir -p ~/.config/noctalia/plugins
+ln -s ~/linux-mech-keys/mech-keys ~/.config/noctalia/plugins/mech-keys
+qs -c noctalia-shell kill && sleep 1 && qs -c noctalia-shell -d
 ```
-┌────────────────────────────────────────────────────────┐
-│     Frontend UI Layer (Noctalia Shell / Quickshell)    │
-│  • BarWidget.qml (Visual Pill, Left/Right/Scroll acts) │
-│  • Settings.qml  (Sound Profile, Volume, Device, Test) │
-│  • Main.qml      (Lifecycle, Auto-build, IPC Handler)  │
-└───────────────────────────┬────────────────────────────┘
-                            │ Stdin Stream (or CLI Direct Invocation)
-┌───────────────────────────▼────────────────────────────┐
-│      mech-sound Standalone Engine (Pure C / miniaudio) │
-│  • epoll-driven /dev/input/event* non-blocking polling │
-│  • 2ms ALSA/PipeWire/PulseAudio low-latency buffer     │
-│  • Multi-voice polyphonic WAV mixing                   │
-│  • EV_KEY repeat debounce filter                       │
-└────────────────────────────────────────────────────────┘
-```
+
+#### Controls:
+- **Left-Click on bar widget:** Opens settings dialog to switch soundpacks, adjust volume, or test switches.
+- **Right-Click:** Mute / Unmute toggle.
+- **Scroll Wheel:** Adjust volume up/down.
 
 ---
 
-## 📜 License
+## Adding Custom Soundpacks
 
-Distributed under the [MIT License](LICENSE). Built for the Linux keyboard enthusiast community with ❤️.
+You can add your own soundpacks or download packs made for Mechvibes:
+
+1. Create a folder under `mech-keys/sounds/<pack-name>/`.
+2. Add `.wav` files:
+   - `space.wav` (Spacebar)
+   - `enter.wav` (Enter key)
+   - `backspace.wav` (Backspace key)
+   - `default.wav` (Generic key sound used for everything else)
+3. If using Noctalia, register the pack in `Settings.qml` and `Main.qml`. If using standalone CLI, just point `--pack` to your folder.
+
+---
+
+## License
+
+MIT License. Key soundpacks provided under Creative Commons / MIT.
